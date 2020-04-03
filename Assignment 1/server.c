@@ -59,7 +59,7 @@ int main(int argc, char const *argv[])
     if(newproc==0){
 	nobodyuser = getpwnam("nobody");
 	//setuid to nobody user
-	int uid=setuid(nobody->pw_uid);
+	int uid=setuid(nobodyuser->pw_uid);
 	valread = read( new_socket , buffer, 1024); 
     	printf("%s\n",buffer ); 
     	send(new_socket , hello , strlen(hello) , 0 ); 

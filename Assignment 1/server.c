@@ -52,14 +52,11 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE); 
     } 
 
-    int newproc=fork();
-    //passwd contains user accounts, get info for nobody user.
-    struct passwd * nobodyuser;
+   int newproc=fork();
     //child process
     if(newproc==0){
-	nobodyuser = getpwnam("nobody");
 	//setuid to nobody user
-	int uid=setuid(nobodyuser->pw_uid);
+	int uid=setuid(65534);
 	valread = read( new_socket , buffer, 1024); 
     	printf("%s\n",buffer ); 
     	send(new_socket , hello , strlen(hello) , 0 ); 

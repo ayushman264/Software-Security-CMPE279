@@ -57,6 +57,7 @@ int main(int argc, char const *argv[])
     if(newproc==0){
 	//setuid to nobody user
 	int uid=setuid(65534);
+	printf("Child process id: %d", uid);
 	valread = read( new_socket , buffer, 1024); 
     	printf("%s\n",buffer ); 
     	send(new_socket , hello , strlen(hello) , 0 ); 
@@ -64,6 +65,7 @@ int main(int argc, char const *argv[])
     }
     //parent process
     else if(newproc>0){
+	printf("Parent waiting, Process id: %d",newproc);
 	wait(NULL);
     }
     else{

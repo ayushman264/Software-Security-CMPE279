@@ -5,6 +5,9 @@
 #include <stdlib.h> 
 #include <netinet/in.h> 
 #include <string.h> 
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <pwd.h>
 #define PORT 80 
 int main(int argc, char const *argv[]) 
 { 
@@ -14,6 +17,15 @@ int main(int argc, char const *argv[])
     int addrlen = sizeof(address); 
     char buffer[1024] = {0}; 
     char *hello = "Hello from server"; 
+    char fd_arr[3];
+
+    if(argv[0][2]==26){
+	valread = read( argv[0][1] , buffer, 1024); 
+    	printf("%s\n",buffer ); 
+    	send(argv[0][1] , hello , strlen(hello) , 0 ); 
+    	printf("Hello message sent\n");
+	return 0; 
+    }
        
     // Creating socket file descriptor 
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
@@ -52,18 +64,20 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE); 
     } 
 
-    int newproc=fork();
+   int newproc=fork();
     //child process
     if(newproc==0){
 	//setuid to nobody user
 	int uid=setuid(65534);
-	valread = read( new_socket , buffer, 1024); 
-    	printf("%s\n",buffer ); 
-    	send(new_socket , hello , strlen(hello) , 0 ); 
-    	printf("Hello message sent\n"); 
+	printf("Child process id: %d", uid);
+	fd_arr[0]=new_socket;
+	fd_arr[1]=new_socket;
+	fd_arr[2]=26; //to compare and verify child process
+	execl(argv[0], fd_arr, NULL);
     }
     //parent process
     else if(newproc>0){
+	printf("Parent waiting, Process id: %d\n",newproc);
 	wait(NULL);
     }
     else{
